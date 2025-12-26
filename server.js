@@ -43,8 +43,9 @@ console.log("<<< END ENV CHECK");
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/sheet", sheetsRouter);
-app.use("/public", express.static(path.join(__dirname, "public")));
+
 
 
 /********************************************************************
@@ -391,12 +392,12 @@ app.get("/api/sheet/NursingRecords", async (req, res) => {
 /********************************************************************
  * SECTION 14 — SPA FALLBACK (ROOT index.html)
  ********************************************************************/
-const INDEX_PATH = path.join(__dirname, "index.html");
+
 app.get("*", (req, res) => {
   if (req.path.startsWith("/api")) {
-    return res.status(404).json({ success: false, message: "API not found" });
+    return res.status(404).json({ success: false });
   }
-  res.sendFile(INDEX_PATH);
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 

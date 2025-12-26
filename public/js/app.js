@@ -6,7 +6,7 @@
 // 0) GLOBAL CONFIG — ตัวแปรใช้งานทั่วระบบ
 // ======================================================================
 const API_BASE = "/api/sheet";       // base URL สำหรับเรียก API → เชื่อมกับ server.js
-const VIEW_BASE = "/public/views";
+const VIEW_BASE = "/views";
 let patientsData = [];               // เก็บข้อมูลผู้ป่วยทั้งหมด (ใช้สำหรับ search และ autocomplete)
 let nsrLocalCounter = 1;             // ตัวนับ NSR สำรอง หาก server ไม่สามารถออกเลข NSR ใหม่ได้
 let nursingFormMode = "add";   // add | edit

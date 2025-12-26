@@ -62,26 +62,40 @@ taskkill /PID <PID> /F
 
 
 SmartNurseHub2026
+ ┣ public
+ ┃ ┣ css/style.css
+ ┃ ┣ js/app.js
+ ┃ ┣ js/nursingRecords.js
+ ┃ ┣ image/LOGO.png
+ ┃ ┗ views/*.html
+ ┣ routes/sheets.js
+ ┣ config/credentials.json
+ ┣ uploads/
+ ┣ .env        (gitignore)
+ ┣ server.js
+ ┣ index.html
+ ┣ package.json
  ┣ config
  ┃ ┗ credentials.json
+ ┣ image
+ ┃ ┗ LOGO.png
  ┣ public
- ┃ ┣ image
- ┃ ┃ ┗ LOGO.png
  ┃ ┣ js
  ┃ ┃ ┗ nursingRecords.js
- ┃ ┣ views
+ ┃ ┗ views
  ┃ ┃ ┣ appointments.html
  ┃ ┃ ┣ nursingRecords.html
  ┃ ┃ ┣ patients.html
  ┃ ┃ ┗ sticker.html
- ┃ ┣ app.js
- ┃ ┣ index.html
- ┃ ┗ style.css
  ┣ routes
  ┃ ┗ sheets.js
  ┣ uploads
  ┣ .env
+ ┣ .gitignore
+ ┣ app.js
+ ┣ index.html
  ┣ package-lock.json
  ┣ package.json
  ┣ README.md
- ┗ server.js
+ ┣ server.js
+ ┗ style.css
