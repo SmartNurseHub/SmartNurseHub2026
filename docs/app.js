@@ -5,7 +5,27 @@
 // ======================================================================
 // 0) GLOBAL CONFIG — ตัวแปรใช้งานทั่วระบบ
 // ======================================================================
-const API_BASE = "/api/sheet";       // base URL สำหรับเรียก API → เชื่อมกับ server.js
+// ======================================================================
+// API BASE CONFIG (รองรับ GitHub Pages + Local + Production Backend)
+// ======================================================================
+const API_BASE = (() => {
+  // 👉 ถ้าเปิดจาก GitHub Pages
+  if (location.hostname.includes("github.io")) {
+  return "https://smartnursehub-backend.onrender.com/api/sheet";
+    // ตัวอย่าง:
+    // return "https://smartnursehub-backend.onrender.com/api/sheet";
+  }
+
+  // 👉 ถ้าเปิดจาก local frontend (dev)
+  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+    return "http://localhost:3000/api/sheet";
+  }
+
+  // 👉 fallback (กรณี deploy frontend + backend domain เดียวกัน)
+  return "/api/sheet";
+})();       // base URL สำหรับเรียก API → เชื่อมกับ server.js
+
+
 let patientsData = [];               // เก็บข้อมูลผู้ป่วยทั้งหมด (ใช้สำหรับ search และ autocomplete)
 let nsrLocalCounter = 1;             // ตัวนับ NSR สำรอง หาก server ไม่สามารถออกเลข NSR ใหม่ได้
 let nursingFormMode = "add";   // add | edit
@@ -979,7 +999,7 @@ function printStickerByNSR(nsr) {
 }
 async function openStickerPrint(r) {
   try {
-    let res = await fetch("/views/sticker.html");
+    let res = await fetch("./views/sticker.html");
     let html = await res.text();
 
     // รายการฟิลด์ทั้งหมดจากฟอร์ม
