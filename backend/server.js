@@ -1,5 +1,5 @@
 /********************************************************************
- * server.js — SmartNurseHub2026 (Render Production)
+ * server.js — FINAL PRODUCTION (Render + GitHub Pages)
  ********************************************************************/
 require("dotenv").config();
 
@@ -8,78 +8,73 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
 
-const { router: sheetsRouter, readSheet } = require("./routes/sheets");
+const { router: sheetsRouter } = require("./routes/sheets");
 
-const PORT = process.env.PORT || 3000;
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-/* =========================
-   CORS — GitHub Pages OK
-========================= */
+/********************************************************************
+ * SECURITY + CORS
+ ********************************************************************/
+app.use(helmet());
+
 app.use(cors({
   origin: [
     "https://smartnursehub.github.io",
     "http://localhost:3000"
-  ]
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
 }));
 
-/* =========================
-   Security / Logging
-========================= */
-app.use(helmet());
 app.use(morgan("combined"));
 
-/* =========================
-   Body Parser
-========================= */
+/********************************************************************
+ * BODY PARSER
+ ********************************************************************/
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-/* =========================
-   Health Check
-========================= */
+/********************************************************************
+ * HEALTH CHECK
+ ********************************************************************/
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", service: "SmartNurseHub Backend" });
+  res.json({
+    status: "ok",
+    service: "SmartNurseHub Backend",
+    time: new Date().toISOString()
+  });
 });
 
-/* =========================
-   API Routes
-========================= */
+/********************************************************************
+ * API ROUTES
+ ********************************************************************/
 app.use("/api/sheet", sheetsRouter);
 
-/* =========================
-   SEARCH Patients (used in app.js)
-========================= */
-app.get("/api/patients", async (req, res) => {
-  try {
-    const q = (req.query.search || "").toLowerCase();
-    if (!q) return res.json({ success: true, data: [] });
-
-    const data = await readSheet("Patients");
-    const result = data.filter(p =>
-      `${p.NAME || ""}${p.LNAME || ""}${p.HN || ""}${p.CID || ""}`
-        .toLowerCase()
-        .includes(q)
-    );
-
-    res.json({ success: true, data: result });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
-  }
+/********************************************************************
+ * 404 HANDLER (สำคัญมาก)
+ ********************************************************************/
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Endpoint not found"
+  });
 });
 
-/* =========================
-   Error Handler
-========================= */
+/********************************************************************
+ * ERROR HANDLER
+ ********************************************************************/
 app.use((err, req, res, next) => {
   console.error("GLOBAL ERROR:", err);
-  res.status(500).json({ success: false, message: "Internal Server Error" });
+  res.status(500).json({
+    success: false,
+    message: err.message || "Internal Server Error"
+  });
 });
 
-/* =========================
-   Start Server
-========================= */
+/********************************************************************
+ * START SERVER
+ ********************************************************************/
 app.listen(PORT, () => {
   console.log(`🚀 SmartNurseHub Backend running on port ${PORT}`);
 });

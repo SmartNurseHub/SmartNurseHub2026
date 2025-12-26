@@ -1,48 +1,48 @@
 /********************************************************************
- * routes/sheets.js — SmartNurseHub2026
+ * routes/sheets.js — FINAL PRODUCTION
  ********************************************************************/
 const express = require("express");
 const { google } = require("googleapis");
-const multer = require("multer");
-const fs = require("fs");
 
 const router = express.Router();
-const upload = multer({ dest: "uploads/" });
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
-
-let sheetsClient = null;
-async function getSheets() {
-  if (sheetsClient) return sheetsClient;
-  const auth = await google.auth.getClient({ scopes: SCOPES });
-  sheetsClient = google.sheets({ version: "v4", auth });
-  return sheetsClient;
+if (!SPREADSHEET_ID) {
+  throw new Error("❌ SPREADSHEET_ID not set");
 }
 
-/* =========================
-   Helpers
-========================= */
+/********************************************************************
+ * GOOGLE AUTH (Service Account)
+ ********************************************************************/
+const auth = new google.auth.GoogleAuth({
+  scopes: ["https://www.googleapis.com/auth/spreadsheets"]
+});
+
+const sheets = google.sheets({ version: "v4", auth });
+
+/********************************************************************
+ * HELPERS
+ ********************************************************************/
 function rowsToObjects(rows = []) {
   if (!rows.length) return [];
-  const headers = rows[0].map(h => String(h).trim());
+  const headers = rows[0].map(h => String(h || "").trim());
   return rows.slice(1).map(r => {
     const o = {};
-    headers.forEach((h, i) => (o[h] = r[i] || ""));
+    headers.forEach((h, i) => (o[h] = r[i] ?? ""));
     return o;
   });
 }
 
-/* =========================
-   GET Sheet (Patients / NursingRecords)
-   app.js → /api/sheet/Patients
-========================= */
-router.get("/:sheetName([A-Za-z0-9_]+)", async (req, res) => {
+/********************************************************************
+ * GET /api/sheet/:sheetName
+ ********************************************************************/
+router.get("/:sheetName", async (req, res) => {
   try {
-    const sheets = await getSheets();
+    const { sheetName } = req.params;
+
     const resp = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: req.params.sheetName
+      range: sheetName
     });
 
     res.json({
@@ -50,115 +50,72 @@ router.get("/:sheetName([A-Za-z0-9_]+)", async (req, res) => {
       data: rowsToObjects(resp.data.values || [])
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
+    console.error("GET sheet error:", err);
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
-/* =========================
-   GET New NSR
-   app.js → /api/sheet/new/nsr
-========================= */
-router.get("/new/nsr", async (req, res) => {
+/********************************************************************
+ * GET /api/sheet/NursingRecords/:nsr
+ ********************************************************************/
+router.get("/NursingRecords/:nsr", async (req, res) => {
   try {
-    const sheets = await getSheets();
+    const nsr = req.params.nsr;
+
     const resp = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: "NursingRecords"
     });
 
     const rows = resp.data.values || [];
-    const headers = rows[0] || [];
-    const nsrIndex = headers.indexOf("NSR");
+    const headers = rows[0];
+    const idx = headers.indexOf("NSR");
+    if (idx === -1) throw new Error("NSR column not found");
+
+    const row = rows.slice(1).find(r => r[idx] === nsr);
+    if (!row) {
+      return res.status(404).json({ success: false, message: "Record not found" });
+    }
+
+    const obj = {};
+    headers.forEach((h, i) => (obj[h] = row[i] ?? ""));
+
+    res.json({ success: true, data: obj });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+/********************************************************************
+ * GET /api/sheet/new/nsr
+ ********************************************************************/
+router.get("/new/nsr", async (req, res) => {
+  try {
+    const resp = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: "NursingRecords!A:A"
+    });
+
+    const yearMonth = new Date().toISOString().slice(0, 7).replace("-", "");
+    const prefix = `NSR${yearMonth}-`;
 
     let max = 0;
-    rows.slice(1).forEach(r => {
-      const n = parseInt((r[nsrIndex] || "").split("-")[1], 10);
-      if (!isNaN(n) && n > max) max = n;
+    (resp.data.values || []).forEach(r => {
+      if (r[0]?.startsWith(prefix)) {
+        const n = parseInt(r[0].split("-")[1], 10);
+        if (n > max) max = n;
+      }
     });
 
-    const d = new Date();
-    const nsr =
-      `NSR${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}-` +
-      String(max + 1).padStart(5, "0");
-
-    res.json({ success: true, next: nsr });
+    res.json({
+      success: true,
+      next: prefix + String(max + 1).padStart(5, "0")
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
-/* =========================
-   SAVE Nursing Record
-   app.js → /api/sheet/NursingRecords/save
-========================= */
-router.post("/NursingRecords/save", async (req, res) => {
-  try {
-    const sheets = await getSheets();
-
-    const meta = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: "NursingRecords!1:1"
-    });
-
-    const headers = meta.data.values[0];
-    const row = headers.map(h => req.body[h] || "");
-
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: SPREADSHEET_ID,
-      range: "NursingRecords",
-      valueInputOption: "RAW",
-      insertDataOption: "INSERT_ROWS",
-      resource: { values: [row] }
-    });
-
-    res.json({ success: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
-  }
-});
-
-/* =========================
-   Upload Patients CSV
-========================= */
-router.post("/upload", upload.single("file"), async (req, res) => {
-  try {
-    const content = fs.readFileSync(req.file.path, "utf8");
-    fs.unlinkSync(req.file.path);
-
-    const rows = content
-      .split(/\r?\n/)
-      .filter(l => l.trim())
-      .map(l => l.split(","));
-
-    const sheets = await getSheets();
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: SPREADSHEET_ID,
-      range: "Patients",
-      valueInputOption: "RAW",
-      insertDataOption: "INSERT_ROWS",
-      resource: { values: rows }
-    });
-
-    res.json({ success: true, totalRows: rows.length });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
-  }
-});
-
-/* =========================
-   EXPORT
-========================= */
-async function readSheet(sheetName) {
-  const sheets = await getSheets();
-  const resp = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: sheetName
-  });
-  return rowsToObjects(resp.data.values || []);
-}
-
-module.exports = { router, readSheet };
+module.exports = { router };
