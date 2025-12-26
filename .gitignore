@@ -1,12 +1,5 @@
-# node
-node_modules/
-
-# env
+node_modules
 .env
-
-# credentials
 config/credentials.json
-
-# uploads
 uploads/*
-!uploads/.gitkeep
+.DS_Store

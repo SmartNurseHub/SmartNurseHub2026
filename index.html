@@ -7,13 +7,16 @@
   <title>Smart Nurse Hub</title> <!-- ชื่อหน้าของเว็บบราวเซอร์ -->
 
   <!-- ========================= CSS SECTION ========================= -->
-   <!-- CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+   <link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- ใช้ Bootstrap -->
+  <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet"> <!-- ใช้ DataTables -->
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet"> <!-- ฟอนต์ Prompt -->
+  <link rel="stylesheet" href="style.css"> <!-- ไฟล์ CSS หลักของโปรเจกต์ (สัมพันธ์กับทุก view) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!-- ไอคอน FA -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"> <!-- ไอคอน Bootstrap -->
 </head>
 
 <body> <!-- ========================= BODY START ========================= -->
@@ -22,7 +25,7 @@
 <header class="app-header"> <!-- ส่วนหัวของระบบ -->
   <span class="menu-btn me-3" onclick="toggleSidebar()">☰</span> <!-- ปุ่มเปิด/ปิด Sidebar (สัมพันธ์กับ app.js) -->
 
-   <img src="/image/LOGO.png" alt="Logo" class="logo">
+  <img src="image/logo.png" alt="Logo" class="logo"> <!-- โลโก้ระบบ -->
 
   <div class="ms-2 me-3 text-start">
   <h6 class="text-muted mb-1" style="font-size: 25px; margin-top: 4;letter-spacing: 2px;">
@@ -85,7 +88,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> <!-- Bootstrap JS -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> <!-- DataTables -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> <!-- Chart JS -->
-<script src="/js/app.js" defer></script>
+<script src="app.js" defer></script>
 
 </body>
 </html>

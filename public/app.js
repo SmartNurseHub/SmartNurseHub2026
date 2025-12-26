@@ -6,7 +6,6 @@
 // 0) GLOBAL CONFIG — ตัวแปรใช้งานทั่วระบบ
 // ======================================================================
 const API_BASE = "/api/sheet";       // base URL สำหรับเรียก API → เชื่อมกับ server.js
-const VIEW_BASE = "/views";
 let patientsData = [];               // เก็บข้อมูลผู้ป่วยทั้งหมด (ใช้สำหรับ search และ autocomplete)
 let nsrLocalCounter = 1;             // ตัวนับ NSR สำรอง หาก server ไม่สามารถออกเลข NSR ใหม่ได้
 let nursingFormMode = "add";   // add | edit
@@ -92,7 +91,7 @@ function navTo(view) {
   }
 
   // view อื่นโหลดจาก /views/xxxx.html
-  fetch(`${VIEW_BASE}/${view}.html`)
+  fetch(`views/${view}.html`)
   .then(res => res.text())
   .then(html => {
     container.innerHTML = html;
@@ -980,7 +979,7 @@ function printStickerByNSR(nsr) {
 }
 async function openStickerPrint(r) {
   try {
-    let res = await fetch(`${VIEW_BASE}/sticker.html`);
+    let res = await fetch("/views/sticker.html");
     let html = await res.text();
 
     // รายการฟิลด์ทั้งหมดจากฟอร์ม
@@ -1007,10 +1006,6 @@ async function openStickerPrint(r) {
   }
 }
 
-// โหลดหน้าแรกอัตโนมัติ
-document.addEventListener("DOMContentLoaded", () => {
-  navTo("dashboard");
-});
 
 
 // ======================================================================
