@@ -211,6 +211,10 @@ app.get("/api/sheet/new/nsr", async (req, res) => {
 /********************************************************************
  * ROOT & SPA FALLBACK
  ********************************************************************/
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", service: "SmartNurseHub Backend" });
+});
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -218,7 +222,8 @@ app.get("/", (req, res) => {
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
-
+console.log("📌 Mounted routes:");
+console.log("/api/sheet/*");
 /********************************************************************
  * GLOBAL ERROR HANDLER
  ********************************************************************/
