@@ -7,18 +7,18 @@ const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
-const fs = require("fs");
-const multer = require("multer");
 
 const { router: sheetsRouter, readSheet } = require("./routes/sheets");
 
 /********************************************************************
- * CONFIG
+ * INIT
  ********************************************************************/
-const PORT = process.env.PORT || 3000;
 const app = express();
-const cors = require("cors");
+const PORT = process.env.PORT || 3000;
 
+/********************************************************************
+ * CORS — สำคัญมาก (ต้องอยู่บนสุด)
+ ********************************************************************/
 app.use(cors({
   origin: [
     "https://smartnursehub.github.io",
@@ -28,13 +28,11 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-
 /********************************************************************
  * SECURITY & LOGGING
  ********************************************************************/
 app.use(helmet());
 app.use(morgan("combined"));
-app.use(cors({ origin: "*" })); // GitHub Pages ใช้ได้ทันที
 
 /********************************************************************
  * BODY PARSER
@@ -43,22 +41,15 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 /********************************************************************
- * UPLOAD CONFIG
- ********************************************************************/
-if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
-
-const upload = multer({
-  dest: "uploads/",
-  limits: { fileSize: 5 * 1024 * 1024 }
-});
-
-/********************************************************************
- * ROUTES
+ * HEALTH CHECK
  ********************************************************************/
 app.get("/health", (req, res) => {
   res.json({ status: "ok", service: "SmartNurseHub Backend" });
 });
 
+/********************************************************************
+ * ROUTES
+ ********************************************************************/
 app.use("/api/sheet", sheetsRouter);
 
 /********************************************************************
@@ -87,14 +78,10 @@ app.get("/api/patients", async (req, res) => {
 });
 
 /********************************************************************
- * GLOBAL ERROR HANDLER
+ * 404 HANDLER (API เท่านั้น)
  ********************************************************************/
-app.use((err, req, res, next) => {
-  console.error("GLOBAL ERROR:", err);
-  res.status(500).json({
-    success: false,
-    message: "Internal Server Error"
-  });
+app.use("/api", (req, res) => {
+  res.status(404).json({ success: false, message: "API Not Found" });
 });
 
 /********************************************************************
