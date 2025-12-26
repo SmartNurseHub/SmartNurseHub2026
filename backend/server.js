@@ -17,6 +17,17 @@ const { router: sheetsRouter, readSheet } = require("./routes/sheets");
  ********************************************************************/
 const PORT = process.env.PORT || 3000;
 const app = express();
+const cors = require("cors");
+
+app.use(cors({
+  origin: [
+    "https://smartnursehub.github.io",
+    "http://localhost:3000"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 
 /********************************************************************
  * SECURITY & LOGGING
