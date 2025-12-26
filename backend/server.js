@@ -1,5 +1,5 @@
 /********************************************************************
- * SERVER.JS — PRODUCTION FINAL (SmartNurseHub2026)
+ * server.js — SmartNurseHub2026 (Render Production)
  ********************************************************************/
 require("dotenv").config();
 
@@ -10,65 +10,57 @@ const cors = require("cors");
 
 const { router: sheetsRouter, readSheet } = require("./routes/sheets");
 
-/********************************************************************
- * INIT
- ********************************************************************/
-const app = express();
 const PORT = process.env.PORT || 3000;
+const app = express();
 
-/********************************************************************
- * CORS — สำคัญมาก (ต้องอยู่บนสุด)
- ********************************************************************/
+/* =========================
+   CORS — GitHub Pages OK
+========================= */
 app.use(cors({
   origin: [
     "https://smartnursehub.github.io",
     "http://localhost:3000"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  ]
 }));
 
-/********************************************************************
- * SECURITY & LOGGING
- ********************************************************************/
+/* =========================
+   Security / Logging
+========================= */
 app.use(helmet());
 app.use(morgan("combined"));
 
-/********************************************************************
- * BODY PARSER
- ********************************************************************/
+/* =========================
+   Body Parser
+========================= */
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-/********************************************************************
- * HEALTH CHECK
- ********************************************************************/
+/* =========================
+   Health Check
+========================= */
 app.get("/health", (req, res) => {
   res.json({ status: "ok", service: "SmartNurseHub Backend" });
 });
 
-/********************************************************************
- * ROUTES
- ********************************************************************/
+/* =========================
+   API Routes
+========================= */
 app.use("/api/sheet", sheetsRouter);
 
-/********************************************************************
- * API: SEARCH PATIENTS
- ********************************************************************/
+/* =========================
+   SEARCH Patients (used in app.js)
+========================= */
 app.get("/api/patients", async (req, res) => {
   try {
-    const q = (req.query.search || "").trim().toLowerCase();
+    const q = (req.query.search || "").toLowerCase();
     if (!q) return res.json({ success: true, data: [] });
 
     const data = await readSheet("Patients");
-    const result = data.filter(p => {
-      const name = `${p.NAME || ""}${p.LNAME || ""}`.toLowerCase();
-      return (
-        name.includes(q) ||
-        (p.HN && p.HN.includes(q)) ||
-        (p.CID && p.CID.includes(q))
-      );
-    });
+    const result = data.filter(p =>
+      `${p.NAME || ""}${p.LNAME || ""}${p.HN || ""}${p.CID || ""}`
+        .toLowerCase()
+        .includes(q)
+    );
 
     res.json({ success: true, data: result });
   } catch (err) {
@@ -77,16 +69,17 @@ app.get("/api/patients", async (req, res) => {
   }
 });
 
-/********************************************************************
- * 404 HANDLER (API เท่านั้น)
- ********************************************************************/
-app.use("/api", (req, res) => {
-  res.status(404).json({ success: false, message: "API Not Found" });
+/* =========================
+   Error Handler
+========================= */
+app.use((err, req, res, next) => {
+  console.error("GLOBAL ERROR:", err);
+  res.status(500).json({ success: false, message: "Internal Server Error" });
 });
 
-/********************************************************************
- * START SERVER
- ********************************************************************/
+/* =========================
+   Start Server
+========================= */
 app.listen(PORT, () => {
   console.log(`🚀 SmartNurseHub Backend running on port ${PORT}`);
 });
