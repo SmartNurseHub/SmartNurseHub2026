@@ -61,5 +61,5 @@ taskkill /PID <PID> /F
 
 
 git add .
-git commit -m "fix static paths and express static"
+git commit -m "Fix structure for GitHub Pages"
 git push
