@@ -1,0 +1,12 @@
+# node
+node_modules/
+
+# env
+.env
+
+# credentials
+config/credentials.json
+
+# uploads
+uploads/*
+!uploads/.gitkeep

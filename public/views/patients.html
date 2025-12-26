@@ -1,0 +1,91 @@
+<!-- =========================================================
+     VIEW : รายชื่อผู้รับบริการ
+     ไฟล์นี้ถูกโหลดผ่าน app.js → navTo('patients')
+     ใช้ API /api/upload (POST) ในการอัปโหลดไฟล์
+========================================================= -->
+
+<h6>รายชื่อผู้รับบริการ</h6> 
+
+<!-- =========================================================
+     SECTION 1 : ฟอร์มอัปโหลดไฟล์รายชื่อผู้รับบริการ
+     ใช้ร่วมกับ API  POST /api/upload   (routes/sheets.js)
+========================================================= -->
+<div id="uploadSection" class="card shadow-lg border-0 p-3 mb-3" style="border-radius: 15px;font-size: 18px;">
+  
+  <h6 class="mb-3 text-center" style="font-size: 16px;">📤 อัปโหลดรายชื่อผู้รับบริการ</h6>
+
+  <!-- เลือกไฟล์ -->
+  <div class="mb-2 text-center">
+
+  <label class="form-label fw-semibold d-block" style="font-size: 12px;">เลือกไฟล์ (.txt / .csv)</label>
+
+  <input type="file" 
+         id="fileInput" 
+         accept=".txt,.csv" 
+         class="form-control mb-1 mx-auto"
+         style="max-width: 400px;font-size: 12px;">
+
+  <small id="fileName" class="text-muted d-block" style="font-size: 12px;">ยังไม่ได้เลือกไฟล์</small>
+
+</div>
+
+
+  <!-- ปุ่มอัปโหลด -->
+  <div class="mt-3 text-center">
+    <!-- ปุ่ม trigger event → ส่งไฟล์ไป API -->
+    <button class="btn btn-primary" id="submitFile" style="font-size: 12px;">อัปโหลด</button>
+  </div>
+
+  <!-- แถบสถานะ upload -->
+  <div class="progress mt-3" id="uploadProgressContainer" style="height: 20px;">
+    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+         role="progressbar" 
+         id="uploadProgress" 
+         style="width: 0%">0%</div>
+  </div>
+</div>
+
+<!-- =========================================================
+     SECTION 2 : แผงรายงานผลหลังอัปโหลด
+     ใช้ค่าจาก API response: { totalRows, newRows, updatedRows }
+========================================================= -->
+<div id="uploadReport" class="mt-3">
+
+  <div class="row g-3">
+    
+    <!-- จำนวนข้อมูลทั้งหมด -->
+    <div class="col-md-4">
+      <div class="card text-center border-success shadow-sm">
+        <div class="card-body">
+          <h6 class="card-title">จำนวนข้อมูลทั้งหมด</h6>
+          <h2 class="card-text fw-bold" id="totalRows">0</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- จำนวนเพิ่มใหม่ -->
+    <div class="col-md-4">
+      <div class="card text-center border-primary shadow-sm">
+        <div class="card-body">
+          <h6 class="card-title">เพิ่มใหม่</h6>
+          <h2 class="card-text fw-bold text-success" id="newRows">0</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- จำนวนอัปเดต -->
+    <div class="col-md-4">
+      <div class="card text-center border-info shadow-sm">
+        <div class="card-body">
+          <h6 class="card-title">อัปเดต</h6>
+          <h2 class="card-text fw-bold text-info" id="updatedRows">0</h2>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- สถานะ -->
+  <div class="alert alert-success mt-3 text-center" id="uploadStatus">สถานะ: -</div>
+</div>
+

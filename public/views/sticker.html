@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Print Sticker</title>
+
+<!-- โหลดฟอนต์ Sarabun จาก Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+@page {
+  size: 90mm 60mm;
+  margin: 3mm;
+}
+
+body {
+  margin: 0;
+  font-family: 'Sarabun', Tahoma, sans-serif;
+}
+
+.sticker {
+  width: 90mm;
+  height: 60mm;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* ขึ้นด้านบน */
+  padding: 2mm;
+  /* border: 1px solid #000; ลบเส้นขอบ */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 1px;
+}
+
+.header img {
+  max-width: 35px;
+  max-height: 35px;
+  margin-right: 3px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 1px;
+}
+
+.col {
+  flex: 1 1 50%;
+  padding: 0;
+}
+
+.label {
+  font-weight: bold;
+  margin-right: 1px;
+}
+
+hr {
+  margin: 1px 0;
+  border: 0;
+  /* border-top: 1px solid #000; ลบเส้นขอบ */
+}
+</style>
+
+
+</head>
+<body>
+<div class="sticker">
+  <div class="header" style="display:flex; align-items:center; justify-content:center; text-align:center; margin-bottom:1px; font-family:'Sarabun', sans-serif; font-size:10px;">
+    <img src="image/logo.png" alt="Logo" style="max-width:35px; max-height:35px; margin-right:3px;">
+    <div>บันทึกการพยาบาลออนไลน์ (Online Nursing Records)<br>มิตรไมตรีคลินิกเวชกรรม สาขาเขาน้อย</div>
+  </div>
+  <hr style="margin:1px 0; border:0; border-top:1px solid #000;">
+
+  <div class="row" style="display:flex; flex-wrap:wrap; margin-bottom:1px; font-family:'Sarabun',sans-serif; font-size:8px;">
+    <div class="col" style="flex:1 1 40%; padding:0;"><span style="font-weight:bold;">NSR:</span> {{NSR}}</div>
+    <div class="col" style="flex:1 1 30%; padding:0;"><span style="font-weight:bold;">วันที่:</span> {{DateService}}</div> 
+    <div class="col" style="flex:1 1 30%; padding:0;"><span style="font-weight:bold;">เบอร์โทรศัพท์:</span> {{TELEPHONE}}</div>  
+  </div>
+  <div class="row" style="display:flex; flex-wrap:wrap; margin-bottom:1px; font-family:'Sarabun', sans-serif; font-size:8px;">
+    <div class="col" style="flex:1 1 30%; padding:0;"><span style="font-weight:bold;">HN:</span> {{HN}}</div>
+    <div class="col" style="flex:1 1 30%; padding:0;"><span style="font-weight:bold;">ชื่อ:</span> {{NAME}} {{LNAME}}</div>
+    <div class="col" style="flex:1 1 40%; padding:0;"><span style="font-weight:bold;">เลขบัตรประชาชน:</span> {{CID}}</div>   
+  </div>
+
+  <hr style="margin:1px 0; border:0; border-top:1px solid #000;">
+  <div class="row" style="display:flex; flex-wrap:wrap; margin-bottom:1px; font-family:'Sarabun', sans-serif; font-size:8px;">
+    <div class="col" style="flex:1 1 100%; padding:0;"><span style="font-weight:bold;">กิจกรรมการพยาบาล:</span><br> {{Activity}}</div>
+    <div class="col" style="flex:1 1 100%; padding:0; margin-top: 5px;"><span style="font-weight:bold;">วัตถุประสงค์:</span><br> {{Objective}}</div>
+    <div class="col" style="flex:1 1 100%; padding:0;margin-top: 5px;"><span style="font-weight:bold;">ข้อมูลสุขภาพ:</span><br> {{HealthInform}}</div>
+    <div class="col" style="flex:1 1 100%; padding:0;margin-top: 5px;"><span style="font-weight:bold;">คำแนะนำ:</span><br> {{HealthAdvice}}</div>
+  </div>
+  <br>
+  <div class="header" style="display:flex; align-items:center; justify-content:center; text-align:center; margin-bottom:1px; font-family:'Sarabun', sans-serif; font-size:8px;">
+    บันทึกการติดตาม</div>
+
+  <table style="width:100%; font-size:6px; border-collapse:collapse; margin-top:2px; border:1px solid #000;">
+  <thead>
+    <tr>
+      <th style="border:1px solid #000; padding:2px; text-align:center;">ครั้ง</th>
+      <th style="border:1px solid #000; padding:2px; text-align:center;">วันที่</th>
+      <th style="border:1px solid #000; padding:2px; text-align:center;">ช่องทาง</th>
+      <th style="border:1px solid #000; padding:2px; text-align:center;">ผลการประเมิน</th>
+      <th style="border:1px solid #000; padding:2px; text-align:center;">ผู้ให้บริการ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #000; padding:2px; text-align:center;">1</td>
+      <td style="border:1px solid #000; padding:2px;text-align:center;">{{DateFollow1}}<br>เวลา :{{TimeFollow1}}</td>
+      <td style="border:1px solid #000; padding:2px;text-align:center;">{{RouteFollow1}}</td>
+      <td style="border:1px solid #000; padding:2px;">{{Response1}}</td>
+      <td style="border:1px solid #000; padding:2px;text-align:center;"><br><br><br>{{Provider1}}</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #000; padding:2px; text-align:center;">2</td>
+      <td style="border:1px solid #000; padding:2px;text-align:center;">{{DateFollow2}}<br>เวลา :{{TimeFollow2}}</td>
+      <td style="border:1px solid #000; padding:2px;text-align:center;">{{RouteFollow2}}</td>
+      <td style="border:1px solid #000; padding:2px;">{{Response2}}</td>
+      <td style="border:1px solid #000; padding:2px;text-align:center;"><br><br><br>{{Provider2}}</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #000; padding:2px; text-align:center;">3</td>
+      <td style="border:1px solid #000; padding:2px;text-align:center;">{{DateFollow3}}<br>เวลา :{{TimeFollow3}}</td>
+      <td style="border:1px solid #000; padding:2px;text-align:center;">{{RouteFollow3}}</td>
+      <td style="border:1px solid #000; padding:2px;">{{Response3}}</td>
+      <td style="border:1px solid #000; padding:2px;text-align:center;"><br><br><br>{{Provider3}}</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</body>
+</html>

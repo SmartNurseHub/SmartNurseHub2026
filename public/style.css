@@ -1,0 +1,468 @@
+/* ==============================
+   ROOT VARIABLES (ตัวแปรหลัก)
+   ============================== */
+:root {
+  --sidebar-width: 220px;       /* ความกว้าง sidebar */
+  --header-height: 60px;        /* ความสูง header */
+  --card-radius: 10px;          /* มุมโค้งของการ์ด */
+  --transition-speed: 0.25s;    /* ความเร็วของแอนิเมชัน transition */
+
+  --primary-color: #006666;     /* สีหลักของ theme */
+  --bg-color: #f4f6f9;          /* สีพื้นหลังหลัก */
+}
+
+/* ==============================
+   GLOBAL STYLES
+   ============================== */
+body, input, textarea, button {
+  font-family: 'Prompt', sans-serif; /* ตั้งฟอนต์ทั้งเว็บ */
+}
+
+body {
+  margin: 0;                       /* ลบ margin เริ่มต้น browser */
+  background: var(--bg-color);     /* ตั้งพื้นหลังจากตัวแปร */
+  font-size: 14px;                 /* กำหนดฟอนต์พื้นฐาน */
+}
+
+/* ==============================
+   HEADER
+   ============================== */
+header.app-header, header {
+  position: fixed;                 /* ให้ header ลอยอยู่ด้านบน */
+  top: 0;                          /* ชิดบน */
+  left: 0;                         /* ชิดซ้าย */
+  width: 100%;                     /* กว้างเต็มพื้นที่ */
+  height: var(--header-height);    /* ใช้ความสูงที่กำหนด */
+  display: flex;                   /* จัด layout แบบ flex */
+  align-items: center;             /* จัดแนวตั้งกึ่งกลาง */
+  padding: 10px 16px;              /* ระยะ padding รอบๆ */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08); /* เงา */
+  z-index: 1000;                   /* อยู่เหนือ sidebar */
+  font-size: 12px;
+  font-weight: 600;
+  background: #fba003fd;           /* สี header */
+  color: #fff;                     /* สีตัวอักษร */
+  gap: 12px;                       /* ช่องว่างระหว่าง element */
+  border-bottom: 1px solid #e5e5e5;/* เส้นขอบล่าง */
+}
+
+header.app-header .app-title {
+  font-size: 20px;                 /* ขนาดชื่อระบบ */
+  font-weight: 600;                /* ตัวหนา */
+}
+
+header.app-header img.logo {
+  width: 48px;                     /* กว้างโลโก้ */
+  height: 48px;                    /* สูงโลโก้ */
+  border-radius: 50%;              /* มน 100% เป็นวงกลม */
+  object-fit: cover;               /* ครอบตัดรูปให้พอดี */
+}
+
+.menu-btn {
+  font-size: 24px;                 /* ขนาด icon เมนู */
+  cursor: pointer;                 /* ชี้เป็น pointer */
+  user-select: none;               /* ห้ามลากเลือก */
+}
+
+/* ==============================
+   USER BOX (กล่องผู้ใช้)
+   ============================== */
+.user-box {
+  margin-left: auto;               /* ดันไปขวาสุด */
+  display: flex;                   /* เรียงแนวนอน */
+  align-items: center;
+  gap: 8px;
+}
+
+.user-box .user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;              /* ทำเป็นวงกลม */
+  object-fit: cover;
+  border: 2px solid #e0e0e0;       /* ขอบรูป */
+}
+
+/* ==============================
+   SIDEBAR
+   ============================== */
+#sidebar {
+  position: fixed;                 /* sidebar ลอยคงที่ */
+  top: var(--header-height);       /* เริ่มหลัง header */
+  left: 0;
+  width: var(--sidebar-width);     /* ใช้ค่าตัวแปร */
+  height: calc(100vh - var(--header-height)); /* เต็มจอด้านล่าง header */
+  background: var(--primary-color);
+  color: #fff;
+  padding-top: 20px;
+  overflow-y: auto;                /* เลื่อนแนวตั้งได้ */
+  z-index: 999;                    /* ใต้ header */
+  transition: all var(--transition-speed);
+}
+
+#sidebar a {
+  display: block;                  /* เต็มบรรทัด */
+  padding: 10px 18px;
+  font-weight: 500;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  margin-bottom: 5px;
+}
+
+#sidebar a:hover {
+  background: rgba(255,255,255,0.1); /* สี hover */
+}
+
+/* sidebar ถูกยุบ */
+#sidebar.collapsed {
+  left: -100%;                     /* ซ่อน sidebar */
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  #sidebar {
+    position: absolute;
+    left: -260px;                  /* ซ่อนไว้ */
+  }
+  #sidebar.collapsed { left: -260px; }
+  #sidebar.active { left: 0; }     /* เปิด sidebar */
+}
+
+/* ==============================
+   CONTENT AREA
+   ============================== */
+#content {
+  margin-left: var(--sidebar-width); /* เว้นที่ให้ sidebar */
+  margin-top: var(--header-height);  /* ไม่ทับ header */
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: margin-left var(--transition-speed);
+}
+
+/* เมื่อ sidebar collapsed ให้ content ขยายเต็มหน้าจอ */
+#sidebar.collapsed + #content,
+#sidebar.collapsed ~ #content {
+  margin-left: 0;
+}
+
+/* ==============================
+   CARDS
+   ============================== */
+.card-compact {
+  border-radius: var(--card-radius); /* ใช้ค่ามุมโค้ง */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* ==============================
+   TABLES
+   ============================== */
+table.dataTable {
+  font-family: 'Prompt', sans-serif;
+  font-size: 0.75rem;
+}
+
+.my-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: #fff;
+}
+
+.my-table th {
+  background: #f3f4f6;             /* สีหัวตาราง */
+  text-align: left;
+  padding: 10px;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+}
+
+.my-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.my-table tr:hover {
+  background: #f9fafb;             /* Hover แถว */
+}
+
+/* ==============================
+   TABS & BUTTONS
+   ============================== */
+.tab-buttons {
+  display: flex;
+  gap: 12px;
+  padding: 8px;
+  background-color: #f5f7fa;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e0e5ec;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background-color: #d1d8e0;
+}
+
+.tab-btn.active {
+  background-color: #006666;
+  color: #fff;
+}
+
+/* ==============================
+   MODAL WINDOWS
+   ============================== */
+.modal {
+  z-index: 5000 !important;
+}
+.modal-backdrop {
+  z-index: 4000 !important;
+}
+.modal-dialog-centered {
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - 1px);
+}
+
+.modal-content {
+  background-color: #fff;
+  max-width: 450px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  animation: slideDown 0.3s ease;    /* แอนิเมชันเปิด modal */
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #006666;
+  color: #fff;
+  padding: 16px 24px;
+}
+
+.close { cursor: pointer; }
+
+.modal-body { padding: 20px 24px; text-align: center; }
+
+.file-label {
+  padding: 10px 20px;
+  background-color: #006666;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#fileName { margin-top: 12px; color: #555; }
+
+.modal-footer { padding: 16px 24px; }
+
+.btn-upload {
+  padding: 10px 25px;
+  background-color: #28a745;
+  border-radius: 6px;
+}
+
+.btn-upload:hover { background-color: #218838; }
+
+@keyframes slideDown { 
+  from { transform: translateY(-30px); opacity: 0; } 
+  to { transform: translateY(0); opacity: 1; } 
+}
+
+/* ==============================
+   NURSING FORM & GRIDS
+   ============================== */
+#nursingOnlineForm {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 30px;
+  display: grid;                    /* ใช้ grid layout */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;                        /* ระยะห่างช่อง */
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+#nursingOnlineForm input,
+#nursingOnlineForm textarea {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+#nursingOnlineForm button[type="submit"] {
+  grid-column: span 2;              /* ให้ปุ่มกิน 2 ช่อง */
+  padding: 16px 0;
+  background: linear-gradient(90deg,#4e9af1,#007BFF);
+  color:#fff;
+  border:none;
+  border-radius:8px;
+}
+
+@media (max-width: 600px) {
+  #nursingOnlineForm { grid-template-columns: 1fr; }
+}
+
+/* ==============================
+   SEARCH & LIST GROUP
+   ============================== */
+#searchResults a.list-group-item { cursor: pointer; }
+#searchResults a.list-group-item.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.input-group { position: relative; }
+
+/* ================= GLOBAL FONT SIZE FOR RECORDS =============== */
+#view-nursingRecords,
+#view-nursingRecords * {
+  font-size: 12px !important;      /* ปรับฟอนต์ทั้งหน้า */
+}
+
+
+/* ===========================
+   MODAL UPLOAD STYLES
+   =========================== */
+/* เปลี่ยนสีปุ่ม Primary ใน Modal Upload */
+#uploadModal .btn-primary {
+  background-color: #006666 !important;
+  border-color: #006666 !important;
+  padding: 8px 25px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+/* เปลี่ยนสีตอน Hover */
+#uploadModal .btn-primary:hover {
+  background-color: #004c4c !important;
+  border-color: #004c4c !important;
+}
+
+/* ปรับเงาและมุมของ modal-content */
+#uploadModal .modal-content {
+  border-radius: 15px !important;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Header */
+#uploadModal .modal-header {
+  background: #006666 !important;
+  color: #fff;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding: 16px 24px;
+}
+
+#uploadModal .modal-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* ปุ่มปิด */
+#uploadModal .btn-close-white {
+  filter: brightness(100);
+}
+
+/* Body */
+#uploadModal .modal-body {
+  background: #fafafa;
+  padding: 25px 30px;
+}
+
+#uploadModal label.form-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+#uploadModal #fileInput {
+  border-radius: 8px;
+}
+
+#uploadModal #fileName {
+  color: #666;
+  display: block;
+  margin-top: 5px;
+  font-size: 0.85rem;
+}
+
+/* เส้นคั่น */
+#uploadModal hr {
+  border-top: 1px solid #ddd;
+  margin: 20px 0;
+}
+
+/* ===========================
+   REPORT BOX (สรุปผล)
+   =========================== */
+
+#uploadReport h6 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+#uploadReport .col .p-2 {
+  background: #f1f3f4;
+  border-radius: 10px;
+  padding: 15px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+#uploadReport .fw-bold {
+  font-size: 1.4rem;
+}
+
+#uploadReport small {
+  color: #666;
+}
+
+/* กล่องสถานะ */
+#uploadStatus {
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* ===========================
+   FOOTER
+   =========================== */
+
+#uploadModal .modal-footer {
+  padding: 15px 25px;
+}
+
+#uploadModal .btn-primary {
+  padding: 8px 25px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+/* ปรับให้ปุ่มเว้าโค้ง */
+#uploadModal .btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* ทำให้ modal อยู่กึ่งกลาง */
+.modal-dialog-centered {
+  display: flex !important;
+  align-items: center !important;
+  min-height: calc(100vh - 1px);
+}
+
+
+
+/* ==============================
+   END OF CSS
+   ============================== */

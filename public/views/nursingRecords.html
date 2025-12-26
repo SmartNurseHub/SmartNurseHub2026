@@ -1,0 +1,278 @@
+<!-- =========================================================
+     VIEW : Nursing Records (บันทึกทางการพยาบาล)
+     ความสัมพันธ์ไฟล์:
+       • โหลดผ่าน navTo('nursingRecords') ใน app.js
+       • ส่งข้อมูลไป backend API:
+            - POST /api/NursingRecords/save
+            - GET /api/nursingRecords
+========================================================= -->
+<!-- =========================================================
+     SECTION 1: ปุ่มสลับ Tab (ออนไลน์ / อัปโหลดไฟล์)
+     ใช้ data-tab-target เพื่อควบคุมแสดง/ซ่อน panel
+========================================================= -->
+<div class="d-flex justify-content-center">
+  <div class="btn-group">
+    <form class="d-flex align-items-center gap-2">
+      <!-- บันทึกการพยาบาลออนไลน์ -->
+      <div class="dropdown">
+        <button class="btn dropdown-toggle" 
+                style="background-color: #006666;color: #ffffff;font-size: 12px;font-weight: 500;padding: 10px 18px;border-radius: 8px;border: none;"
+                type="button"
+                id="dropdownMenunursingrecord"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+          👩‍⚕️บันทึกการพยาบาลออนไลน์💻
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenunursingrecord"style="min-width: 250px;font-size: 12px;padding: 8px 0;">
+          <li><a class="dropdown-item open-tab" data-target-tab="online">➕ เพิ่มใหม่</a></li>
+          <li><a class="dropdown-item edit-record" href="#" data-nsr="">✏️ แก้ไข</a></li>
+          <li><a class="dropdown-item" href="#">📋 รายการ</a></li>
+        </ul>
+      </div>
+
+      <!-- บันทึกการให้คำปรึกษา -->
+      <div class="dropdown">
+        <button class="btn dropdown-toggle"
+                style="background-color: #006666;color: #ffffff;font-size: 12px;font-weight: 500;padding: 10px 18px;border-radius: 8px;border: none;"
+                type="button"
+                id="dropdownMenunursingconsel"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+          👩‍⚕️บันทึกการให้คำปรึกษา💬
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenunursingconsel" style="min-width: 220px;font-size: 12px;padding: 8px 0;">
+          <li><a class="dropdown-item" href="#">➕ เพิ่มใหม่</a></li>
+          <li><a class="dropdown-item" href="#">✏️ แก้ไข</a></li>
+          <li><a class="dropdown-item" href="#">📋 รายการ</a></li>
+        </ul>
+      </div>
+
+    </form>
+    
+  </div>
+</div>
+
+
+<!-- =========================================================
+     SECTION 2: TAB — บันทึกออนไลน์
+     ฟอร์มนี้ส่งเข้า API /api/NursingRecords/save (routes/sheets.js)
+========================================================= -->
+  <div class="nr-tab-panel" data-tab="online" style="display:none;">
+
+    <!-- ===========================
+        ฟอร์มบันทึกออนไลน์
+        ความสัมพันธ์ API:
+          ส่งข้อมูลทั้งหมดเป็น JSON ไปยัง backend
+    ============================ -->
+
+      <div class="col-6 mx-auto mb-3 mt-4">
+            <div class="input-group" >
+              <span style="font-size:10px;" class="input-group-text">🔍</span>
+              <input style="font-size:10px;" type="text" id="patientSearch" class="form-control" placeholder="พิมพ์ เลข บปช / HN / ชื่อ / สกุล">
+              <button style="font-size:10px;" type="button" class="btn btn-primary" id="btnSearchPatient">ค้นหา</button>
+            </div>
+            <div id="searchResults" class="list-group" style="position:absolute; display:none;"></div>
+      </div>
+
+      <div>
+        <form id="nursingForm" class="row g-3">
+            <!-- Basic Info -->
+            <div class="col-md-2" >
+              <label style="font-size:10px;" class="form-label mb-0">NSR No.</label>
+              <input style="font-size:10px;" type="text" class="form-control" id="NSR" name="NSR">
+            </div>
+            <div class="col-md-2" hidden>
+              <label class="form-label mb-0">วันที่บันทึกข้อมูล</label>
+              <input type="text" class="form-control" id="Stamp" name="Stamp">
+            </div>
+            <div class="col-md-2">
+              <label style="font-size:10px;" style="font-size:10px;" class="form-label mb-0">HN</label>
+              <input style="font-size:10px;" type="text" class="form-control" id="HN" name="HN">
+            </div>
+            <div class="col-md-2">
+              <label style="font-size:10px;"class="form-label mb-0">เลขบัตรประชาชน</label>
+              <input style="font-size:10px;"type="text" class="form-control" id="CID" name="CID">
+            </div>
+            <div class="col-md-2">
+              <label style="font-size:10px;"class="form-label mb-0">ชื่อผู้รับบริการ</label>
+              <input style="font-size:10px;"type="text" class="form-control" id="NAME" name="NAME">
+            </div>
+            <div class="col-md-2">
+              <label style="font-size:10px;"class="form-label mb-0">นามสกุล</label>
+              <input style="font-size:10px;"type="text" class="form-control" id="LNAME" name="LNAME">
+            </div>
+            <div class="col-md-2">
+              <label style="font-size:10px;"class="form-label mb-0">เบอร์โทรศัพท์</label>
+              <input style="font-size:10px;"type="text" class="form-control" id="TELEPHONE" name="TELEPHONE">
+            </div>
+            <div class="col-md-2">
+              <label style="font-size:10px;"class="form-label mb-0">วันที่ให้บริการ</label>
+              <input style="font-size:10px;"type="date" class="form-control" id="DateService" name="DateService">
+            </div>
+            <div class="col-md-5">
+              <label style="font-size:10px;"class="form-label mb-0">กิจกรรมทางการพยาบาล</label>
+              <input style="font-size:10px;"type="text" class="form-control" id="Activity" name="Activity">
+            </div>
+            <div class="col-md-5">
+              <label style="font-size:10px;"class="form-label mb-0">วัตถุประสงค์</label>
+              <input style="font-size:10px;"type="text" class="form-control" id="Objective" name="Objective">
+            </div>
+            <div class="col-6">
+              <label style="font-size:10px;" class="form-label mb-0">ข้อมูลสุขภาพ</label>
+              <textarea style="font-size:10px;"class="form-control"id="HealthInform"name="HealthInform"rows="2"data-type="inform"></textarea>
+            </div>
+            <div class="col-6">
+              <label style="font-size:10px;" class="form-label mb-0">การให้คำแนะนำ</label>
+              <textarea style="font-size:10px;"class="form-control"id="HealthAdvice"name="HealthAdvice"rows="2"data-type="advice"></textarea>
+            </div>
+
+            <!-- Follow-ups Tabs -->
+            <ul class="nav nav-tabs mb-2" id="followUpTabs" role="tablist">
+              <li class="nav-item">
+                <button style="font-size:10px;"class="nav-link active" id="follow1-tab" data-bs-toggle="tab" data-bs-target="#follow1" type="button" role="tab">ติดตามครั้งที่ 1</button>
+              </li>
+              <li class="nav-item">
+                <button style="font-size:10px;"class="nav-link" id="follow2-tab" data-bs-toggle="tab" data-bs-target="#follow2" type="button" role="tab">ติดตามครั้งที่ 2</button>
+              </li>
+              <li class="nav-item">
+                <button style="font-size:10px;"class="nav-link" id="follow3-tab" data-bs-toggle="tab" data-bs-target="#follow3" type="button" role="tab">ติดตามครั้งที่ 3</button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="followUpTabsContent">
+              <!-- Follow-up 1 -->
+              <div class="tab-pane fade show active" id="follow1" role="tabpanel">
+                <div class="row g-2">
+                  <div class="col-3">
+                    <label style="font-size:10px;">วันที่ติดตาม:</label>
+                    <input style="font-size:10px;"type="date" class="form-control form-control-sm" id="DateFollow1" name="DateFollow1">
+                  </div>
+                  <div class="col-2">
+                    <label style="font-size:10px;">เวลา:</label>
+                    <input style="font-size:10px;"type="time" class="form-control form-control-sm" id="TimeFollow1" name="TimeFollow1">
+                  </div>
+                  <div class="col-3">
+                    <label style="font-size:10px;">ช่องทาง:</label>
+                    <select style="font-size:10px;" class="form-select form-select-sm" id="RouteFollow1" name="RouteFollow1">
+                      <option value="">-- เลือกช่องทาง --</option>
+                      <option value="Line OA">Line OA</option>
+                      <option value="Facebook">Facebook</option>
+                      <option value="โทรศัพท์">โทรศัพท์</option>
+                      <option value="หน้าเว็บไซต์">หน้าเว็บไซต์</option>
+                      <option value="อื่นๆ">อื่นๆ</option>
+                    </select>
+                  </div>
+                  <div class="col-4">
+                    <label style="font-size:10px;">ผู้ให้บริการ:</label>
+                    <textarea style="font-size:10px;" class="form-control form-control-sm"id="Provider1" name="Provider1" rows="1" data-type="provider"></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label style="font-size:10px;">ผลการประเมิน:</label>
+                    <textarea style="font-size:10px;" class="form-control form-control-sm"id="Response1" name="Response1" rows="1" data-type="response"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Follow-up 2 -->
+              <div class="tab-pane fade" id="follow2" role="tabpanel">
+                <div class="row g-2">
+                  <div class="col-3">
+                    <label style="font-size:10px;">วันที่ติดตาม:</label>
+                    <input style="font-size:10px;"type="date" class="form-control form-control-sm" id="DateFollow2" name="DateFollow2">
+                  </div>
+                  <div class="col-2">
+                    <label style="font-size:10px;">เวลา:</label>
+                    <input style="font-size:10px;" type="time" class="form-control form-control-sm" id="TimeFollow2" name="TimeFollow2">
+                  </div>
+                  <div class="col-3">
+                    <label style="font-size:10px;">ช่องทาง:</label>
+                    <select style="font-size:10px;" class="form-select form-select-sm" id="RouteFollow2" name="RouteFollow2">
+                      <option value="">-- เลือกช่องทาง --</option>
+                      <option value="Line OA">Line OA</option>
+                      <option value="Facebook">Facebook</option>
+                      <option value="โทรศัพท์">โทรศัพท์</option>
+                      <option value="หน้าเว็บไซต์">หน้าเว็บไซต์</option>
+                      <option value="อื่นๆ">อื่นๆ</option>
+                    </select>
+                  </div>
+                  <div class="col-4">
+                    <label style="font-size:10px;">ผู้ให้บริการ:</label>
+                    <textarea style="font-size:10px;" class="form-control form-control-sm"id="Provider2" name="Provider2" rows="1" data-type="provider"></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label style="font-size:10px;">ผลการประเมิน:</label>
+                    <textarea style="font-size:10px;" class="form-control form-control-sm"id="Response2" name="Response2" rows="1" data-type="response"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Follow-up 3 -->
+              <div class="tab-pane fade" id="follow3" role="tabpanel">
+                <div class="row g-2">
+                  <div class="col-3">
+                    <label style="font-size:10px;">วันที่ติดตาม:</label>
+                    <input style="font-size:10px;"type="date" class="form-control form-control-sm" id="DateFollow3" name="DateFollow3">
+                  </div>
+                  <div class="col-2">
+                    <label style="font-size:10px;">เวลา:</label>
+                    <input style="font-size:10px;"type="time" class="form-control form-control-sm" id="TimeFollow3" name="TimeFollow3">
+                  </div>
+                  <div class="col-3">
+                    <label style="font-size:10px;">ช่องทาง:</label>
+                    <select style="font-size:10px;"class="form-select form-select-sm" id="RouteFollow3" name="RouteFollow3">
+                      <option value="">-- เลือกช่องทาง --</option>
+                      <option value="Line OA">Line OA</option>
+                      <option value="Facebook">Facebook</option>
+                      <option value="โทรศัพท์">โทรศัพท์</option>
+                      <option value="หน้าเว็บไซต์">หน้าเว็บไซต์</option>
+                      <option value="อื่นๆ">อื่นๆ</option>
+                    </select>
+                  </div>
+                  <div class="col-4">
+                    <label style="font-size:10px;">ผู้ให้บริการ:</label>
+                    <textarea style="font-size:10px;" class="form-control form-control-sm"id="Provider3" name="Provider3" rows="1" data-type="provider"></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label style="font-size:10px;">ผลการประเมิน:</label>
+                    <textarea style="font-size:10px;" class="form-control form-control-sm"id="Response3" name="Response3" rows="1" data-type="response"></textarea>
+                  </div>
+                </div>
+              </div>
+
+            </div> <!-- tab-content -->
+
+            <div class="col-12 mt-2">
+              <button style="font-size:10px;" type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+          <!-- 🔽 กล่อง suggestion ใช้ร่วมทุก textarea -->
+        <div id="textarea-suggest"class="list-group position-absolute"style="z-index:2000; display:none; font-size:10px;"></div>
+      </div>
+  <!-- =======================================================
+       TABLE: รายการบันทึกทั้งหมดที่โหลดจาก GET /api/nursingRecords
+       ความสัมพันธ์ไฟล์:
+         - แสดงผลจาก loadNursingRecords() ใน app.js หรือที่หน้านี้
+======================================================= -->
+<!-- ================= TABLE CONTAINER ================= -->
+<div class="mt-4" id="nursingTableSection">
+  <h6 class="text-center mb-3">รายการบันทึกทางการพยาบาล</h6>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped" style="font-size:10px;">
+      <thead class="table-primary text-center">
+        <tr>
+          <th width="12%">NSR No.</th>
+          <th width="9%">วันที่ให้บริการ</th>
+          <th width="9%">HN</th>
+          <th width="15%">ชื่อ - สกุล</th>
+          <th width="25%">กิจกรรม</th>
+          <th width="15%">ผู้บันทึก</th>
+          <th width="15%">การจัดการ</th>
+        </tr>
+      </thead>
+      <tbody id="nursingTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+
