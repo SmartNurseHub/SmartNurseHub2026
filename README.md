@@ -58,3 +58,8 @@ taskkill /PID <PID> /F
 2.เมื่อ views : nursingRecords.html แสดงในหหน้า index.html เมื่อ เลือก <li><a class="dropdown-item open-tab" data-target-tab="online">เพิ่มใหม่</a></li> จะมี <form id="nursingForm" class="row g-3"> แสดงพร้อมกับแสดงเลขรันอัตโนมัติ  ในช่อง <input type="text" class="form-control" id="NSR" name="NSR">,<input type="text" class="form-control" id="Stamp" name="Stamp"> และ ดึงข้อมูลมาแสดง <tbody id="nursingTableBody"></tbody> นี้ 
 ปัญหาคือ ไม่มีข้อมูลเลขรันอัตโนมัติ และ ตาราง
 ขอคุณจะตรวจไฟล์งานที่เกี่ยวข้องจากไฟล์ของฉัน คุณจะตรวจไฟล์ไหนก่อนไหนก่อน
+
+
+git add .
+git commit -m "fix static paths and express static"
+git push
