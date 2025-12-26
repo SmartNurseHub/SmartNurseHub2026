@@ -6,24 +6,12 @@
 // 0) GLOBAL CONFIG — ตัวแปรใช้งานทั่วระบบ
 // ======================================================================
 // ======================================================================
-// API BASE CONFIG (รองรับ GitHub Pages + Local + Production Backend)
+// API BASE (FINAL - FIXED)
 // ======================================================================
-const API_BASE = (() => {
-  // 👉 ถ้าเปิดจาก GitHub Pages
-  if (location.hostname.includes("github.io")) {
-  return "https://smartnursehub-backend.onrender.com/api/sheet";
-    // ตัวอย่าง:
-    // return "https://smartnursehub-backend.onrender.com/api/sheet";
-  }
-
-  // 👉 ถ้าเปิดจาก local frontend (dev)
-  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-    return "http://localhost:3000/api/sheet";
-  }
-
-  // 👉 fallback (กรณี deploy frontend + backend domain เดียวกัน)
-  return "/api/sheet";
-})();       // base URL สำหรับเรียก API → เชื่อมกับ server.js
+const API_BASE =
+  location.hostname.includes("github.io")
+    ? "https://smartnursehub-backend.onrender.com/api/sheet"
+    : "http://localhost:3000/api/sheet";
 
 
 let patientsData = [];               // เก็บข้อมูลผู้ป่วยทั้งหมด (ใช้สำหรับ search และ autocomplete)
@@ -422,11 +410,12 @@ function setupNursingForm() {
       // ⭐ ADD MODE
       // =========================
       else {
-        res = await fetch(`${API_BASE}/NursingRecords`, {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(data)
-        });
+        res = await fetch(`${API_BASE}/NursingRecords/save`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data)
+});
+
       }
 
       json = await res.json();
